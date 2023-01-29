@@ -172,6 +172,18 @@
                 }
             },
             template: '#login',
+            created() {
+                axios.post(`${apiUrl}api/user/check`, {}, {
+                    headers: { Authorization: window.localStorage.getItem('token') },
+                })
+                    .then((res) => {
+                        alert('歡迎回來')
+                        this.$router.push({path: '/list'})
+                    })
+                    .catch((err) => {
+                        console.log(err.response)
+                    })
+            },
             methods: {
                 login() {
                     const loginData = {
