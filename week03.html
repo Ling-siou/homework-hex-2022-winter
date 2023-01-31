@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>week03</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://unpkg.com/vue-router@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .image {
+            max-width: 250px;
+            height: auto;
+        }
+
+        .image-in-flex {
+            height: 120px;
+            width: auto;
+        }
+
+        .login form{
+            width: 300px;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="m-auto container">
+        <router-view></router-view>
+    </div>
+    <script type="text/x-template" id="itemList">
+        <div class="row mt-3">
+            <a href="#" class="text-end" @click.prevent="logout">登出</a>
+            <div class="col-xl-5 col-md-6 col-xs-12">
+                <!-- 列表 -->
+                <div class="d-flex align-item-center">
+                    <h2 class="mb-0">產品列表</h2>
+                    <button type="button" class="btn btn-success ms-auto btn-sm align-self-center"
+                    data-bs-toggle="modal" data-bs-target="#newItemModal"
+                    @click="modalModeNewItem = true,setEditData('')">新增品項</button>
+                </div>
+                <table class="table table-hover mt-2">
+                    <tbody>
+                    <tr>
+                        <th width="150">產品名稱</th>
+                        <th width="120">
+                            原價
+                        </th>
+                        <th width="120">
+                            售價
+                        </th>
+                        <th width="100">
+                            是否啟用
+                        </th>
+                        <th width="140">
+                            功能
+                        </th>
+                    </tr>
+                    <tr v-for="item in products" :key="item.id">
+                        <td class="bg-light">{{item.title}}</td>
+                        <td class="bg-light">{{item.origin_price}}</td>
+                        <td class="bg-light">{{item.price}}</td>
+                        <td class="bg-light">
+                            <span v-if="item.is_enabled !== 0 && item.is_enabled !== '0'" class="text-success">啟用</span>
+                            <span v-else class="text-danger">未啟用</span></td>
+                        <td class="bg-light">
+                            <div class="d-flex">
+                                <button class="btn btn-sm me-1" :class="showId === item.id ? 'btn-light disabled': 'btn-primary'" type="button" @click="showId = item.id">
+                                <i class="bi" :class="showId === item.id ? 'bi-eye-fill': 'bi-eye'">
+                                    </i></button>
+                            <button class="btn btn-sm btn-info me-1" type="button" @click="modalModeNewItem = false, setEditData(item.id)"
+                            data-bs-toggle="modal" data-bs-target="#newItemModal">
+                                <i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-danger" type="button" @click="deleteItem(item.id)">
+                                <i class="bi bi-trash3"></i></button>
+                            </div>
+                            
+                            </td>
+                    </tr>
+                </tbody>
+                </table>
+                <p>目前有 {{ products.length }} 項產品</p>
+            </div>
+            <div class="col-xl-7 col-md-6 col-xs-12 bg-light p-3">
+                <!-- 單一展示 -->
+                <h2 class="mb-4" v-if="showId">{{detialItme.title}}</h2>
+                <h2 class="mb-4" v-else>單一產品細節</h2>
+                <div v-if="showId">
+                    <div class="center mb-2">
+                        <img :src="detialItme.imageUrl" alt="detialItme.title" class="image mx-auto d-block">
+                    </div>
+                    <p>類型: {{detialItme.category}}<br>
+                        描述: {{detialItme.description}}<br>
+                    內容: {{detialItme.content}}</p>
+                    <p class="text-end">{{detialItme.price}} <del>{{detialItme.origin_price}}</del> 元 / {{detialItme.unit}}</p>
+                    <!-- 圖片列表 -->
+                    <div class="d-flex flex-row">
+                        <div class="p-1" v-for="(url, index) in detialItme.imagesUrl" :key="index">
+                            <img :src="url" v-if="url" alt="detialItme.title" class="image-in-flex">
+                        </div>
+                    </div>
+                </div>
+                <div v-else>
+                    <p class="text-secondary">請選擇一個商品查看</p>
+                </div>
+            </div>
+            <!-- modle -->
+            <div class="modal fade" id="newItemModal" tabindex="-1" aria-labelledby="newItemModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title fs-5" id="newItemModalLabel">{{modalModeTiele}}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref="closeMobal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- title -->
+                        <div class="mb-3 row">
+                            <label for="itemName" class="col-sm-3 col-form-label text-end">項目名稱</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="itemName" v-model="title">
+                            </div>
+                        </div>
+                        <!-- category -->
+                        <div class="mb-3 row">
+                            <label for="itemCategory" class="col-sm-3 col-form-label text-end">類型</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="itemCategory" v-model="category">
+                            </div>
+                        </div>
+                        <!-- description -->
+                        <div class="mb-3 row">
+                            <label for="itemDescription" class="col-sm-3 col-form-label text-end">描述</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="itemDescription" v-model="description">
+                            </div>
+                        </div>
+                        <!-- content -->
+                        <div class="mb-3 row">
+                            <label for="itemContent" class="col-sm-3 col-form-label text-end">描述</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="itemContent" v-model="content">
+                            </div>
+                        </div>
+                        <!-- unit -->
+                        <div class="mb-3 row">
+                            <label for="itemUnit" class="col-sm-3 col-form-label text-end">單位</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="itemUnit" v-model="unit">
+                            </div>
+                        </div>
+                        <!-- origin_price -->
+                        <!-- price -->
+                        <div class="mb-3 row">
+                            <label for="itemOriginPrice" class="col-sm-3 col-form-label text-end">原價</label>
+                            <div class="col-sm-3">
+                              <input type="number" class="form-control" id="itemOriginPrice" v-model="originPrice">
+                            </div>
+                            <label for="itemPrice" class="col-sm-2 col-form-label text-end">售價</label>
+                            <div class="col-sm-3">
+                              <input type="number" class="form-control" id="itemPrice" v-model="price">
+                            </div>
+                        </div>
+                        <!-- imageUrl -->
+                        <div class="mb-3 row">
+                            <label for="itemUrl" class="col-sm-3 col-form-label text-end">主要圖片</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="itemUrl" placeholder="請輸入網址" v-model="imageUrl">
+                            </div>
+                        </div>
+                        <!-- imagesUrl -->
+                        <div class="mb-3 row">
+                            <label for="itemUrls1" class="col-sm-3 col-form-label text-end">主要圖片</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control mb-2" id="itemUrls1" placeholder="請輸入網址" v-model="imagesUrl[0]">
+                              <input type="text" class="form-control mb-2" id="itemUrls2" placeholder="請輸入網址" v-model="imagesUrl[1]">
+                              <input type="text" class="form-control mb-2" id="itemUrls3" placeholder="請輸入網址" v-model="imagesUrl[2]">
+                              <input type="text" class="form-control mb-2" id="itemUrls4" placeholder="請輸入網址"  v-model="imagesUrl[3]">
+                              <input type="text" class="form-control" id="itemUrls5" placeholder="請輸入網址"  v-model="imagesUrl[4]">
+                            </div>
+                        </div>
+                        <!-- is_enabled -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="isEnabled" v-model="isEnabled">
+                            <label class="form-check-label" for="isEnabled">啟用</label>
+                          </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <!-- TODO -->
+                      <!-- {{modalMode}} -->
+                      <button v-if="modalModeNewItem" type="button" class="btn btn-primary" @click="newThisItem">新增項目</button>
+                      <button v-else type="button" class="btn btn-primary" @click="editItem()">儲存編輯</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+    </script>
+    <script type="text/x-template" id="login">
+        <div class="login pt-5">
+        <form>
+            <h3 class="mb-3 text-center">登入</h3>
+            <div class="mb-3">
+              <label for="loginEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="loginEmail" v-model="email">
+            </div>
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label">密碼</label>
+              <input type="password" class="form-control" id="loginPassword" v-model="password">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary text-center" @click.prevent="login">登入</button>
+            </div>
+          </form>
+          <router-link to="/list">Go to List</router-link>
+        </div>
+    </script>
+    <script type="module">
+        
+        // 共用
+        const apiUrl = 'https://vue3-course-api.hexschool.io/v2/'
+        // routerComp
+        const itemListComp = {
+            data() {
+                return {
+                    products: [],
+                    showId: '',
+                    title: '',
+                    category: '',
+                    description: '',
+                    content:'',
+                    unit: '',
+                    originPrice: '',
+                    price: '',
+                    imageUrl: '',
+                    imagesUrl:['','','','',''],
+                    isEnabled: false,
+                    modalModeNewItem: true,
+                    editItemId: '',
+                }
+            },
+            template: '#itemList',
+            created() {
+                this.getItemList()
+            },
+            computed: {
+                modalModeTiele() {
+                    return this.modalModeNewItem ? '新增項目' : '編輯項目';
+                },
+                detialItme() {
+                    const detialDate = this.setShowItem(this.showId);
+                    return detialDate || this.showId;
+                },
+                editItemData() {
+                    return {
+                        data: {
+                        title: this.title,
+                        category: this.category,
+                        description: this.description,
+                        content: this.content,
+                        origin_price: this.originPrice,
+                        price: this.price,
+                        unit: this.unit,
+                        imageUrl: this.imageUrl,
+                        imagesUrl: this.imagesUrl,
+                        is_enabled: this.isEnabled ? '1': '0'
+                        }
+                    }
+                }
+            },
+            methods: {
+                setShowItem(id) {
+                    const detialDate = this.products.find((item) => item.id === id)
+                    return detialDate || '';
+                },
+                getItemList() {
+                    axios.get(`${apiUrl}api/jujube-in-hex/admin/products`)
+                    .then((res) => {
+                        console.log(res.data.products)
+                        this.products = res.data.products
+                    })
+                    .catch((err) => {
+                        alert(err.response.data.message)
+                        this.$router.push({path: '/'})
+                    })
+                },
+                logout() {
+                    axios.post(`${apiUrl}logout`,{},{
+                    headers: { Authorization: window.localStorage.getItem('token') },
+                    })
+                    .then((res) => {
+                        alert('已登出')
+                        window.localStorage.setItem('token', '')
+                        this.$router.push({path: '/'})
+                    })
+                    .catch((err) => {
+                        alert('登出失敗')
+                    })
+                },
+                deleteItem(id) {
+                    console.log(`.${id}`)
+                    axios.delete(`${apiUrl}api/jujube-in-hex/admin/product/${id}`)
+                    .then((res) => {
+                        alert('刪除成功')
+                        this.getItemList()
+                        // 若刪除正在檢視的商品，檢視id改回預設
+                        if(this.showId === id) {
+                            this.showId = ''
+                        }
+                    })
+                    .catch((err) => {
+                        alert(err.response.data.message)
+                    })
+                },
+                setEditData(id){
+                    if(id) {
+                        this.editItemId = id;
+                    }
+                    const editItem = id ? this.setShowItem(id) : {};
+
+                    // set data
+                    this.title = editItem.title || '';
+                    this.category = editItem.category || '';
+                    this.content = editItem.content || '';
+                    this.description = editItem.description || '';
+                    this.imageUrl = editItem.imageUrl || '';
+                    this.imagesUrl = editItem.imagesUrl || '';
+                    this.isEnabled = (editItem.is_enabled !== 0 && editItem.is_enabled !== '0') || '';
+                    this.originPrice = editItem.origin_price || '';
+                    this.price =  editItem.price || '';
+                    this.unit =  editItem.unit || '';                    
+                },
+                editItem() {
+                    axios.put(`${apiUrl}api/jujube-in-hex/admin/product/${this.editItemId}`, this.editItemData)
+                    .then((res) => {
+                        alert('編輯成功')
+                        this.$refs.closeMobal.click()
+                        this.getItemList()
+                        this.setEditData('')
+                    })
+                    .catch((err => {
+                        alert(err.response.data.message)
+                    }))
+                },
+                newThisItem() {
+                    console.log(this.editItemData)
+                    axios.post(`${apiUrl}api/jujube-in-hex/admin/product`, this.editItemData)
+                    .then((res) => {
+                        alert('新增成功')
+                        this.$refs.closeMobal.click()
+                        this.getItemList()
+                        this.setEditData('')
+                    })
+                    .catch((err => {
+                        alert(err.response.data.message)
+                    }))
+                }
+            }
+        }
+        const loginComp = {
+            data() {
+                return {
+                    email: '',
+                    password: ''
+                }
+            },
+            template: '#login',
+            created() {
+                axios.post(`${apiUrl}api/user/check`, {})
+                    .then((res) => {
+                        alert('歡迎回來')
+                        this.$router.push({path: '/list'})
+                    })
+                    .catch((err) => {
+                        console.log(err.response)
+                    })
+            },
+            methods: {
+                login() {
+                    const loginData = {
+                        username: this.email,
+                        password: this.password
+                    }
+                    axios.post(`${apiUrl}admin/signin`, loginData)
+                    .then((res) => {
+                        console.log(res.data)
+                        window.localStorage.setItem('token', res.data.token)
+                        // 登入後預設後續的 headers 'Authorization'
+                        axios.defaults.headers.common['Authorization'] = window.localStorage.getItem('token');
+                        alert('登入成功')
+                        this.$router.push({path: '/list'})
+                    })
+                    .catch((err) => {
+                        console.log(err.response)
+                        alert('登入失敗')
+                    })
+                }
+            },
+        }
+        // routes
+        const routes = [
+            {path: '/list', component: itemListComp},
+            {path: '/', component: loginComp}
+        ]
+
+        const router = VueRouter.createRouter({
+          history: VueRouter.createWebHashHistory(),
+          routes,
+        })
+
+        const appDate = {
+            // 內容在各route中
+            created() {
+                // 預設後續的 headers 'Authorization'
+                axios.defaults.headers.common['Authorization'] = window.localStorage.getItem('token');
+            }
+        }
+
+        Vue.createApp(appDate).use(router).mount('#app')
+</script>
+</body>
+
+</html>
