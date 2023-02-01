@@ -77,7 +77,7 @@
                             <button class="btn btn-sm btn-info me-1" type="button" @click="modalModeNewItem = false, setEditData(item.id)"
                             data-bs-toggle="modal" data-bs-target="#newItemModal">
                                 <i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger" type="button" @click="deleteItem(item.id)">
+                            <button class="btn btn-sm btn-danger" type="button" @click="deleteCheckModal(item.id, item.title)">
                                 <i class="bi bi-trash3"></i></button>
                             </div>
                             
@@ -159,11 +159,11 @@
                         <div class="mb-3 row">
                             <label for="itemOriginPrice" class="col-sm-3 col-form-label text-end">原價</label>
                             <div class="col-sm-3">
-                              <input type="number" class="form-control" id="itemOriginPrice" v-model="originPrice">
+                              <input type="number" class="form-control" id="itemOriginPrice" v-model.number="originPrice"  min=0>
                             </div>
                             <label for="itemPrice" class="col-sm-2 col-form-label text-end">售價</label>
                             <div class="col-sm-3">
-                              <input type="number" class="form-control" id="itemPrice" v-model="price">
+                              <input type="number" class="form-control" id="itemPrice" v-model.number="price" min=0>
                             </div>
                         </div>
                         <!-- imageUrl -->
@@ -189,17 +189,34 @@
                             <input type="checkbox" class="form-check-input" id="isEnabled" v-model="isEnabled">
                             <label class="form-check-label" for="isEnabled">啟用</label>
                           </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <!-- TODO -->
+                            <!-- {{modalMode}} -->
+                            <button v-if="modalModeNewItem" type="button" class="btn btn-primary" @click="newThisItem">新增項目</button>
+                            <button v-else type="button" class="btn btn-primary" @click="editItem()">儲存編輯</button>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <!-- TODO -->
-                      <!-- {{modalMode}} -->
-                      <button v-if="modalModeNewItem" type="button" class="btn btn-primary" @click="newThisItem">新增項目</button>
-                      <button v-else type="button" class="btn btn-primary" @click="editItem()">儲存編輯</button>
-                    </div>
-                  </div>
                 </div>
-              </div>
+            </div>
+            <div class="modal" id="checkModal" tabindex="-1" aria-labelledby="checkModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">確認刪除</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>確定要刪除項目「{{deleteItemName}}」嗎?<br>刪除的項目無法復原 </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ref="close">Close</button>
+                            <button type="button" class="btn btn-danger" @click="deleteItem">確認刪除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </script>
     <script type="text/x-template" id="login">
@@ -243,6 +260,8 @@
                     isEnabled: false,
                     modalModeNewItem: true,
                     editItemId: '',
+                    deleteItemId: '',
+                    deleteItemName: ''
                 }
             },
             template: '#itemList',
@@ -275,6 +294,12 @@
                 }
             },
             methods: {
+                deleteCheckModal(id, name){
+                    var checkModal = new bootstrap.Modal(document.getElementById('checkModal'))
+                        this.deleteItemId = id;
+                        this.deleteItemName = name;
+                        checkModal.show();
+                },
                 setShowItem(id) {
                     const detialDate = this.products.find((item) => item.id === id)
                     return detialDate || '';
@@ -282,7 +307,6 @@
                 getItemList() {
                     axios.get(`${apiUrl}api/jujube-in-hex/admin/products`)
                     .then((res) => {
-                        console.log(res.data.products)
                         this.products = res.data.products
                     })
                     .catch((err) => {
@@ -303,14 +327,14 @@
                         alert('登出失敗')
                     })
                 },
-                deleteItem(id) {
-                    console.log(`.${id}`)
-                    axios.delete(`${apiUrl}api/jujube-in-hex/admin/product/${id}`)
+                deleteItem() {
+                    axios.delete(`${apiUrl}api/jujube-in-hex/admin/product/${this.deleteItemId}`)
                     .then((res) => {
                         alert('刪除成功')
                         this.getItemList()
                         // 若刪除正在檢視的商品，檢視id改回預設
-                        if(this.showId === id) {
+                        this.$refs.close.click();
+                        if(this.showId === this.deleteItemId) {
                             this.showId = ''
                         }
                     })
@@ -330,11 +354,19 @@
                     this.content = editItem.content || '';
                     this.description = editItem.description || '';
                     this.imageUrl = editItem.imageUrl || '';
-                    this.imagesUrl = editItem.imagesUrl || '';
                     this.isEnabled = (editItem.is_enabled !== 0 && editItem.is_enabled !== '0') || '';
                     this.originPrice = editItem.origin_price || '';
                     this.price =  editItem.price || '';
-                    this.unit =  editItem.unit || '';                    
+                    this.unit =  editItem.unit || '';
+                    if (editItem.imagesUrl) {
+                        editItem.imagesUrl.forEach((e, i) => {
+                            this.imagesUrl[i] = e
+                        })
+                    } else {
+                        for (let i = 0; i < 5; i++) {
+                            this.imagesUrl[i] = '';
+                        }
+                    }                  
                 },
                 editItem() {
                     axios.put(`${apiUrl}api/jujube-in-hex/admin/product/${this.editItemId}`, this.editItemData)
@@ -349,7 +381,6 @@
                     }))
                 },
                 newThisItem() {
-                    console.log(this.editItemData)
                     axios.post(`${apiUrl}api/jujube-in-hex/admin/product`, this.editItemData)
                     .then((res) => {
                         alert('新增成功')
@@ -377,9 +408,6 @@
                         alert('歡迎回來')
                         this.$router.push({path: '/list'})
                     })
-                    .catch((err) => {
-                        console.log(err.response)
-                    })
             },
             methods: {
                 login() {
@@ -389,7 +417,6 @@
                     }
                     axios.post(`${apiUrl}admin/signin`, loginData)
                     .then((res) => {
-                        console.log(res.data)
                         window.localStorage.setItem('token', res.data.token)
                         // 登入後預設後續的 headers 'Authorization'
                         axios.defaults.headers.common['Authorization'] = window.localStorage.getItem('token');
@@ -397,7 +424,6 @@
                         this.$router.push({path: '/list'})
                     })
                     .catch((err) => {
-                        console.log(err.response)
                         alert('登入失敗')
                     })
                 }
