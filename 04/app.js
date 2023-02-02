@@ -20,16 +20,18 @@ const itemListComp = {
         return {
             products: [],
             showId: '',
-            title: '',
-            category: '',
-            description: '',
-            content: '',
-            unit: '',
-            originPrice: '',
-            price: '',
-            imageUrl: '',
-            imagesUrl: ['', '', '', '', ''],
-            isEnabled: false,
+            modalItemData: {
+                title: '',
+                category: '',
+                description: '',
+                content: '',
+                unit: '',
+                originPrice: '',
+                price: '',
+                imageUrl: '',
+                imagesUrl: ['', '', '', '', ''],
+                isEnabled: false
+            },
             modalModeNewItem: true,
             editItemId: '',
             deleteItemId: '',
@@ -52,16 +54,16 @@ const itemListComp = {
         editItemData() {
             return {
                 data: {
-                    title: this.title,
-                    category: this.category,
-                    description: this.description,
-                    content: this.content,
-                    origin_price: this.originPrice,
-                    price: this.price,
-                    unit: this.unit,
-                    imageUrl: this.imageUrl,
-                    imagesUrl: this.imagesUrl,
-                    is_enabled: this.isEnabled ? '1' : '0'
+                    title: this.modalItemData.title,
+                    category: this.modalItemData.category,
+                    description: this.modalItemData.description,
+                    content: this.modalItemData.content,
+                    origin_price: this.modalItemData.originPrice,
+                    price: this.modalItemData.price,
+                    unit: this.modalItemData.unit,
+                    imageUrl: this.modalItemData.imageUrl,
+                    imagesUrl: this.modalItemData.imagesUrl,
+                    is_enabled: this.modalItemData.isEnabled ? '1' : '0'
                 }
             };
         }
@@ -128,22 +130,22 @@ const itemListComp = {
             const editItem = id ? this.setShowItem(id) : {};
 
             // set data
-            this.title = editItem.title || '';
-            this.category = editItem.category || '';
-            this.content = editItem.content || '';
-            this.description = editItem.description || '';
-            this.imageUrl = editItem.imageUrl || '';
-            this.isEnabled = (editItem.is_enabled !== 0 && editItem.is_enabled !== '0') || '';
-            this.originPrice = editItem.origin_price || '';
-            this.price = editItem.price || '';
-            this.unit = editItem.unit || '';
+            this.modalItemData.title = editItem.title || '';
+            this.modalItemData.category = editItem.category || '';
+            this.modalItemData.content = editItem.content || '';
+            this.modalItemData.description = editItem.description || '';
+            this.modalItemData.imageUrl = editItem.imageUrl || '';
+            this.modalItemData.isEnabled = (editItem.is_enabled !== 0 && editItem.is_enabled !== '0') || '';
+            this.modalItemData.originPrice = editItem.origin_price || '';
+            this.modalItemData.price = editItem.price || '';
+            this.modalItemData.unit = editItem.unit || '';
             if (editItem.imagesUrl) {
                 editItem.imagesUrl.forEach((e, i) => {
-                    this.imagesUrl[i] = e;
+                    this.modalItemData.imagesUrl[i] = e;
                 });
             } else {
                 for (let i = 0; i < 5; i++) {
-                    this.imagesUrl[i] = '';
+                    this.modalItemData.imagesUrl[i] = '';
                 }
             }
         },
