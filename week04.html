@@ -114,7 +114,7 @@
             </div>
             <!-- modle -->
             <editItemDataTemp :modal-mode-tiele="modalModeTiele" :modal-mode-new-item="modalModeNewItem" 
-            :modal-item-data="modalItemData" :new-this-item="newThisItem" :edit-item="editItem" />
+            :modal-item-data="modalItemData" :new-this-item="newThisItem" :edit-item="editItem" ref="editItemModalTemp" />
             <checkDeleteModalTemp :delete-item-name="deleteItemName" :delete-item="deleteItem" ref="checkDeleteModalTemp" />
         </div>
     </script>
@@ -230,27 +230,7 @@
             </div>
         </div>
     </script>
-    <!-- 確認商品刪除 -->
-    <script type="text/x-template" id="checkDeleteModalTemp">
-        <div class="modal" id="checkModal" tabindex="-1" aria-labelledby="checkModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">確認刪除</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>確定要刪除項目「{{deleteItemName}}」嗎?<br>刪除的項目無法復原 </p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ref="close">Close</button>
-                        <button type="button" class="btn btn-danger" @click="deleteItem">確認刪除</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </script>
-    <script src="./04/app.js"></script>
+    <script src="./04/app.js" type="module"></script>
 </body>
 
 </html>

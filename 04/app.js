@@ -3,20 +3,17 @@
 // 共用
 const apiUrl = 'https://vue3-course-api.hexschool.io/v2/';
 
-// components
-const checkDeleteModalTemp = {
-    props: ['deleteItemName', 'deleteItem'],
-    template: '#checkDeleteModalTemp',
-    methods: {
-        closeModal() {
-            this.$refs.close.click();
-        }
-    }
-};
+import checkDeleteModalTemp from './checkDeleteModalTemp.js'; 
+// import editItemDataTemp from './editItemDataTemp.js';
 
 const editItemDataTemp = {
     props: ['modalModeTiele', 'modalModeNewItem', 'modalItemData', 'newThisItem', 'editItem'],
-    template: '#editItemDataTemp'
+    template: '#editItemDataTemp',
+    methods: {
+        closeModal() {
+            this.$refs.closeMobal.click();
+        }
+    }
 };
 
 // routerComp
@@ -170,7 +167,7 @@ const itemListComp = {
             axios.post(`${apiUrl}api/jujube-in-hex/admin/product`, this.editItemData)
                 .then((res) => {
                     alert('新增成功');
-                    this.$refs.closeMobal.click();
+                    this.$refs.editItemModalTemp.closeModal();
                     this.getItemList();
                     this.setEditData('');
                 })
@@ -241,6 +238,6 @@ const appDate = {
         // 預設後續的 headers 'Authorization'
         axios.defaults.headers.common['Authorization'] = window.localStorage.getItem('token');
     }
-}
+};
 
 Vue.createApp(appDate).use(router).mount('#app');
