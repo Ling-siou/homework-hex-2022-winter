@@ -42,7 +42,7 @@
             <div class="col-xl-5 col-md-6 col-xs-12">
                 <!-- 列表 -->
                 <form>
-                    <input type="file" name="file-to-upload" @change="fileChose()" ref="fileInput">
+                    <input type="file" name="file-to-upload" v-on:change="fileChose()" ref="fileInput">
                     <input type="submit" value="Upload">
                     </form>  
                 <div class="d-flex align-item-center">
