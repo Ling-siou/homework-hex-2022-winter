@@ -202,23 +202,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal" id="checkModal" tabindex="-1" aria-labelledby="checkModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">確認刪除</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>確定要刪除項目「{{deleteItemName}}」嗎?<br>刪除的項目無法復原 </p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ref="close">Close</button>
-                            <button type="button" class="btn btn-danger" @click="deleteItem">確認刪除</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <checkModalTemp :delete-item-name="deleteItemName" :delete-item="deleteItem" ref="checkModalTemp" />
         </div>
     </script>
     <script type="text/x-template" id="login">
@@ -238,6 +222,25 @@
             </div>
           </form>
           <router-link to="/list">Go to List</router-link>
+        </div>
+    </script>
+    <script type="text/x-template" id="checkModalTemp">
+        <div class="modal" id="checkModal" tabindex="-1" aria-labelledby="checkModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">確認刪除</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>確定要刪除項目「{{deleteItemName}}」嗎?<br>刪除的項目無法復原 </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ref="close">Close</button>
+                        <button type="button" class="btn btn-danger" @click="deleteItem">確認刪除</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </script>
     <script src="./04/app.js"></script>

@@ -2,6 +2,18 @@
 
 // 共用
 const apiUrl = 'https://vue3-course-api.hexschool.io/v2/';
+
+// components
+const checkModalTemp = {
+    props: ['deleteItemName', 'deleteItem'],
+    template: '#checkModalTemp',
+    methods: {
+        closeModal() {
+            this.$refs.close.click();
+        }
+    }
+};
+
 // routerComp
 const itemListComp = {
     data() {
@@ -25,6 +37,7 @@ const itemListComp = {
         };
     },
     template: '#itemList',
+    components : { checkModalTemp },
     created() {
         this.getItemList();
     },
@@ -99,7 +112,7 @@ const itemListComp = {
                     alert('刪除成功');
                     this.getItemList();
                     // 若刪除正在檢視的商品，檢視id改回預設
-                    this.$refs.close.click();
+                    this.$refs.checkModalTemp.closeModal();
                     if (this.showId === this.deleteItemId) {
                         this.showId = '';
                     }
@@ -185,7 +198,7 @@ const loginComp = {
             };
             axios.post(`${apiUrl}admin/signin`, loginData)
                 .then((res) => {
-                    window.localStorage.setItem('token', res.data.token)
+                    window.localStorage.setItem('token', res.data.token);
                     // 登入後預設後續的 headers 'Authorization'
                     axios.defaults.headers.common['Authorization'] = window.localStorage.getItem('token');
                     alert('登入成功');
