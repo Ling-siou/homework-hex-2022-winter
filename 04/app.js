@@ -181,13 +181,13 @@ const itemListComp = {
             console.log(this.$refs.fileInput.files[0]);
             const choseFile = this.$refs.fileInput.files[0];
             let upLoadfile = new FormData();
-            upLoadfile.append('file', choseFile);
+            upLoadfile.append('file-to-upload', choseFile);
             axios.post(`${apiUrl}api/${adminPath}/admin/upload`, choseFile)
             .then((res) => {
                 console.log(res.data);
             })
             .catch((err) => {
-                alert(err.response.data.message);
+                console.dir(err);
             });
         }
     }
