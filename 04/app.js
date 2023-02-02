@@ -2,7 +2,7 @@
 
 // 共用
 const apiUrl = 'https://vue3-course-api.hexschool.io/v2/';
-
+const adminPath = 'jujube-in-hex';
 import checkDeleteModalTemp from './checkDeleteModalTemp.js'; 
 // import editItemDataTemp from './editItemDataTemp.js';
 
@@ -37,7 +37,8 @@ const itemListComp = {
             modalModeNewItem: true,
             editItemId: '',
             deleteItemId: '',
-            deleteItemName: ''
+            deleteItemName: '',
+            uploadImgUrl: '',
         };
     },
     template: '#itemList',
@@ -82,7 +83,7 @@ const itemListComp = {
             return detialDate || '';
         },
         getItemList() {
-            axios.get(`${apiUrl}api/jujube-in-hex/admin/products`)
+            axios.get(`${apiUrl}api/${adminPath}/admin/products`)
                 .then((res) => {
                     this.products = res.data.products;
                 })
@@ -111,7 +112,7 @@ const itemListComp = {
                 });
         },
         deleteItem() {
-            axios.delete(`${apiUrl}api/jujube-in-hex/admin/product/${this.deleteItemId}`)
+            axios.delete(`${apiUrl}api/${adminPath}/admin/product/${this.deleteItemId}`)
                 .then((res) => {
                     alert('刪除成功');
                     this.getItemList();
@@ -152,7 +153,7 @@ const itemListComp = {
             }
         },
         editItem() {
-            axios.put(`${apiUrl}api/jujube-in-hex/admin/product/${this.editItemId}`, this.editItemData)
+            axios.put(`${apiUrl}api/${adminPath}/admin/product/${this.editItemId}`, this.editItemData)
                 .then((res) => {
                     alert('編輯成功');
                     this.$refs.closeMobal.click();
@@ -164,7 +165,7 @@ const itemListComp = {
                 }));
         },
         newThisItem() {
-            axios.post(`${apiUrl}api/jujube-in-hex/admin/product`, this.editItemData)
+            axios.post(`${apiUrl}api/${adminPath}/admin/product`, this.editItemData)
                 .then((res) => {
                     alert('新增成功');
                     this.$refs.editItemModalTemp.closeModal();
@@ -174,6 +175,20 @@ const itemListComp = {
                 .catch((err => {
                     alert(err.response.data.message);
                 }));
+        },
+        fileChose() {
+            console.log('已選擇檔案');
+            console.log(this.$refs.fileInput.files[0]);
+            const choseFile = this.$refs.fileInput.files[0];
+            let upLoadfile = new FormData();
+            upLoadfile.append('file', choseFile);
+            axios.post(`${apiUrl}api/${adminPath}/admin/upload`, choseFile)
+            .then((res) => {
+                console.log(res.data);
+            })
+            .catch((err) => {
+                alert(err.response.data.message);
+            });
         }
     }
 };

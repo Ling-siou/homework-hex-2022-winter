@@ -41,6 +41,10 @@
             <a href="#" class="text-end" @click.prevent="logout">登出</a>
             <div class="col-xl-5 col-md-6 col-xs-12">
                 <!-- 列表 -->
+                <form>
+                    <input type="file" name="file-to-upload" @change="fileChose" ref="fileInput">
+                    <input type="submit" value="Upload">
+                    </form>  
                 <div class="d-flex align-item-center">
                     <h2 class="mb-0">產品列表</h2>
                     <button type="button" class="btn btn-success ms-auto btn-sm align-self-center"
