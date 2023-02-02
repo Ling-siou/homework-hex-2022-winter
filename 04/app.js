@@ -4,14 +4,19 @@
 const apiUrl = 'https://vue3-course-api.hexschool.io/v2/';
 
 // components
-const checkModalTemp = {
+const checkDeleteModalTemp = {
     props: ['deleteItemName', 'deleteItem'],
-    template: '#checkModalTemp',
+    template: '#checkDeleteModalTemp',
     methods: {
         closeModal() {
             this.$refs.close.click();
         }
     }
+};
+
+const editItemDataTemp = {
+    props: ['modalModeTiele', 'modalModeNewItem', 'modalItemData', 'newThisItem', 'editItem'],
+    template: '#editItemDataTemp'
 };
 
 // routerComp
@@ -39,7 +44,7 @@ const itemListComp = {
         };
     },
     template: '#itemList',
-    components : { checkModalTemp },
+    components : { checkDeleteModalTemp, editItemDataTemp },
     created() {
         this.getItemList();
     },
@@ -114,7 +119,7 @@ const itemListComp = {
                     alert('刪除成功');
                     this.getItemList();
                     // 若刪除正在檢視的商品，檢視id改回預設
-                    this.$refs.checkModalTemp.closeModal();
+                    this.$refs.checkDeleteModalTemp.closeModal();
                     if (this.showId === this.deleteItemId) {
                         this.showId = '';
                     }
