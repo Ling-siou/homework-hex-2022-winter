@@ -11,9 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3"></script>
     <script src="https://unpkg.com/vue-router@4"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.9.1/axios.min.js'
-      integrity='sha512-Xk3wWei2TGrsh9kDSBKUMIjw/86sLUvhtnv9f7fOuIwhhiUTKz8szkWkzHthrM5Bb3Bu9idSzkxOrkzhcneuiw=='
-      crossorigin='anonymous'></script>
+    <script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
     <style>
         .image {
             max-width: 250px;
@@ -41,10 +39,6 @@
             <a href="#" class="text-end" @click.prevent="logout">登出</a>
             <div class="col-xl-5 col-md-6 col-xs-12">
                 <!-- 列表 -->
-                <form>
-                    <input type="file" name="file-to-upload" v-on:change="fileChose()" ref="fileInput">
-                    <input type="submit" value="Upload">
-                    </form>  
                 <div class="d-flex align-item-center">
                     <h2 class="mb-0">產品列表</h2>
                     <button type="button" class="btn btn-success ms-auto btn-sm align-self-center"
@@ -106,7 +100,7 @@
                     內容: {{detialItme.content}}</p>
                     <p class="text-end">{{detialItme.price}} <del>{{detialItme.origin_price}}</del> 元 / {{detialItme.unit}}</p>
                     <!-- 圖片列表 -->
-                    <div class="d-flex flex-row">
+                    <div class="d-flex overflow-auto">
                         <div class="p-1" v-for="(url, index) in detialItme.imagesUrl" :key="index">
                             <img :src="url" v-if="url" alt="detialItme.title" class="image-in-flex">
                         </div>
@@ -118,7 +112,8 @@
             </div>
             <!-- modle -->
             <editItemDataTemp :modal-mode-tiele="modalModeTiele" :modal-mode-new-item="modalModeNewItem" 
-            :modal-item-data="modalItemData" :new-this-item="newThisItem" :edit-item="editItem" ref="editItemModalTemp" />
+            :modal-item-data="modalItemData" :new-this-item="newThisItem" :edit-item="editItem" ref="editItemModalTemp"
+            @update-value="setUploadImgUrl" />
             <checkDeleteModalTemp :delete-item-name="deleteItemName" :delete-item="deleteItem" ref="checkDeleteModalTemp" />
         </div>
     </script>
@@ -199,17 +194,42 @@
                           <input type="number" class="form-control" id="itemPrice" v-model.number="modalItemData.price" min=0>
                         </div>
                     </div>
+                    <div class="mb-3 row align-items-center">
+                        <label class="col-sm-3 col-form-label text-end">圖片設定</label>
+                        <div class="col-sm-8">
+                          <button class="btn btn-sm me-2" :class="updateImgBtnClass.byDownload"
+                          @click="updateImgByDownload = true">上傳圖片</button>
+                          <button class="btn btn-sm"
+                          :class="updateImgBtnClass.byUrl"
+                          @click="updateImgByDownload = false">輸入網址</button>
+                        </div>
+                    </div>
                     <!-- imageUrl -->
                     <div class="mb-3 row">
                         <label for="itemUrl" class="col-sm-3 col-form-label text-end">主要圖片</label>
                         <div class="col-sm-8">
-                          <input type="text" class="form-control" id="itemUrl" placeholder="請輸入網址" v-model="modalItemData.imageUrl">
+                            <imageUrlSetterComp v-if="updateImgByDownload"
+                            @update-value="updateValue"  :img-Item="'imageUrl'"/>
+                          <input v-else type="text" class="form-control" id="itemUrl"
+                           placeholder="請輸入網址" v-model="modalItemData.imageUrl">
                         </div>
                     </div>
                     <!-- imagesUrl -->
                     <div class="mb-3 row">
-                        <label for="itemUrls1" class="col-sm-3 col-form-label text-end">主要圖片</label>
-                        <div class="col-sm-8">
+                        <label for="itemUrls1" class="col-sm-3 col-form-label text-end">其他圖片</label>
+                        <div v-if="updateImgByDownload" class="col-sm-8">
+                            <imageUrlSetterComp @update-value="updateValue"
+                             :img-Item="'imagesUrl'" :img-Int="'0'"/>
+                             <imageUrlSetterComp @update-value="updateValue"
+                             :img-Item="'imagesUrl'" :img-Int="'1'"/>
+                             <imageUrlSetterComp @update-value="updateValue"
+                             :img-Item="'imagesUrl'" :img-Int="'2'"/>
+                             <imageUrlSetterComp @update-value="updateValue"
+                             :img-Item="'imagesUrl'" :img-Int="'3'"/>
+                             <imageUrlSetterComp @update-value="updateValue"
+                             :img-Item="'imagesUrl'" :img-Int="'4'"/>
+                            </div>
+                        <div v-else class="col-sm-8">
                           <input type="text" class="form-control mb-2" id="itemUrls1" placeholder="請輸入網址" v-model="modalItemData.imagesUrl[0]">
                           <input type="text" class="form-control mb-2" id="itemUrls2" placeholder="請輸入網址" v-model="modalItemData.imagesUrl[1]">
                           <input type="text" class="form-control mb-2" id="itemUrls3" placeholder="請輸入網址" v-model="modalItemData.imagesUrl[2]">
@@ -232,6 +252,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </script>
+    <script type="text/x-template" id="imageUrlSetter">
+        <div class="mb-3">
+            <input type="file" name="file-to-upload" v-on:change="fileChose()" ref="fileInput" class="form-control">
+            <p v-if="memo" class="mt-1" :class="uploadSuccess ? 'text-success' : 'text-danger'">{{ memo }}</p>
         </div>
     </script>
     <script src="./04/app.js" type="module"></script>

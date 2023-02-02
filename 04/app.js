@@ -5,13 +5,86 @@ const apiUrl = 'https://vue3-course-api.hexschool.io/v2/';
 const adminPath = 'jujube-in-hex';
 import checkDeleteModalTemp from './checkDeleteModalTemp.js'; 
 // import editItemDataTemp from './editItemDataTemp.js';
+const imageUrlSetterComp = {
+    props: ['imgItem', 'imgInt'],
+    data() {
+        return {
+            value: '',
+            memo:'',
+            uploadSuccess: true,
+        };
+    },
+    computed: {
+        emitData() {
+            return {
+                imgItem: this.imgItem,
+                imgInt: this.imgInt,
+                value: this.value,
+            };
+        }
+    },
+    template: '#imageUrlSetter',
+    methods: {
+        fileChose() {
+            this.memo = '檔案上傳中，請稍等...';
+            console.log(this.$refs.fileInput.files[0]);
+            const choseFile = this.$refs.fileInput.files[0];
+            let upLoadfile = new FormData();
+            upLoadfile.append('file-to-upload', choseFile);
 
+            axios.post(`${apiUrl}api/${adminPath}/admin/upload`, upLoadfile)
+            .then((res) => {
+                console.log(res.data);
+                if(res.data.success) {
+                    this.value = res.data.imageUrl;
+                    this.updateValue(res.data.imageUrl);
+                    this.uploadSuccess = true;
+                    this.memo = '上傳成功!';
+                } else {
+                    alert(res.data.message);
+                    this.uploadSuccess = false;
+                    this.memo = '上傳失敗';
+                }
+                
+            })
+            .catch((err) => {
+                console.dir(err);
+            });
+            
+        },
+        updateValue(value) {
+            console.log('in', value);
+            this.$emit('update-value', this.emitData);
+        }
+    }
+};
 const editItemDataTemp = {
+    data() {
+        return {
+            updateImgByDownload: true
+        };
+    },
     props: ['modalModeTiele', 'modalModeNewItem', 'modalItemData', 'newThisItem', 'editItem'],
     template: '#editItemDataTemp',
+    components: {imageUrlSetterComp},
+    computed: {
+        updateImgBtnClass() {
+            return this.updateImgByDownload ? {
+                byDownload: 'btn-primary',
+                byUrl: 'btn-outline-primary'
+            } : {
+                byDownload: 'btn-outline-primary',
+                byUrl: 'btn-primary'
+            };
+        }
+    },
     methods: {
         closeModal() {
             this.$refs.closeMobal.click();
+        },
+        updateValue(val){
+            console.log('mit', val);
+            this.$emit('update-value', val);
         }
     }
 };
@@ -37,8 +110,7 @@ const itemListComp = {
             modalModeNewItem: true,
             editItemId: '',
             deleteItemId: '',
-            deleteItemName: '',
-            uploadImgUrl: '',
+            deleteItemName: ''
         };
     },
     template: '#itemList',
@@ -72,6 +144,15 @@ const itemListComp = {
         }
     },
     methods: {
+        setUploadImgUrl(val) {
+            // console.log(val);
+            if(val.imgInt) {
+                this.modalItemData[val.imgItem][val.imgInt] = val.value;
+            } else {
+                this.modalItemData[val.imgItem] = val.value;
+            }
+
+        },
         deleteCheckModal(id, name) {
             var checkModal = new bootstrap.Modal(document.getElementById('checkModal'));
             this.deleteItemId = id;
@@ -156,7 +237,7 @@ const itemListComp = {
             axios.put(`${apiUrl}api/${adminPath}/admin/product/${this.editItemId}`, this.editItemData)
                 .then((res) => {
                     alert('編輯成功');
-                    this.$refs.closeMobal.click();
+                    this.$refs.editItemModalTemp.closeModal();
                     this.getItemList();
                     this.setEditData('');
                 })
@@ -175,20 +256,6 @@ const itemListComp = {
                 .catch((err => {
                     alert(err.response.data.message);
                 }));
-        },
-        fileChose() {
-            console.log('已選擇檔案');
-            console.log(this.$refs.fileInput.files[0]);
-            const choseFile = this.$refs.fileInput.files[0];
-            let upLoadfile = new FormData();
-            upLoadfile.append('file-to-upload', choseFile);
-            axios.post(`${apiUrl}api/${adminPath}/admin/upload`, choseFile)
-            .then((res) => {
-                console.log(res.data);
-            })
-            .catch((err) => {
-                console.dir(err);
-            });
         }
     }
 };
