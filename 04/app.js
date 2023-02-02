@@ -61,7 +61,7 @@ const imageUrlSetterComp = {
 const editItemDataTemp = {
     data() {
         return {
-            updateImgByDownload: true
+            updateImgByDownload: false
         };
     },
     props: ['modalModeTiele', 'modalModeNewItem', 'modalItemData', 'newThisItem', 'editItem'],
