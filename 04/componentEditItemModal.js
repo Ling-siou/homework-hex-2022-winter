@@ -1,7 +1,7 @@
 import { apiUrl, adminPath } from './config.js';
 
 const imageUrlSetterComp = {
-    props: ['imgItem', 'imgInt'],
+    props: ['imgItem', 'imgInt', 'imgUrl'],
     data() {
         return {
             value: '',
@@ -19,8 +19,10 @@ const imageUrlSetterComp = {
         }
     },
     template: `
-    <div class="mb-3">
-            <input type="file" name="file-to-upload" v-on:change="fileChose()" ref="fileInput" class="form-control">
+    <div class="mb-2">
+            <input type="text" v-model="imgUrl" placeholder="請使用下方的「選擇檔案」上傳圖檔"
+            class="form-control form-control-sm mb-1" disabled>
+            <input type="file" name="file-to-upload" v-on:change="fileChose()" ref="fileInput" class="form-control form-control-sm">
             <p v-if="memo" class="mt-1" :class="uploadSuccess ? 'text-success' : 'text-danger'">{{ memo }}</p>
         </div>
     `,
@@ -125,6 +127,13 @@ export default {
                           <input type="number" class="form-control" id="itemPrice" v-model.number="modalItemData.price" min=0>
                         </div>
                     </div>
+                    <!-- start -->
+                    <div class="mb-3 row">
+                        <label for="start" class="col-sm-3 col-form-label text-end">顧客評分</label>
+                        <div class="col-sm-8">
+                        <input type="number" class="form-control" id="start" v-model.number="modalItemData.starts" min=0>
+                        </div>
+                    </div>
                     <div class="mb-3 row align-items-center">
                         <label class="col-sm-3 col-form-label text-end">圖片設定</label>
                         <div class="col-sm-8">
@@ -140,7 +149,8 @@ export default {
                         <label for="itemUrl" class="col-sm-3 col-form-label text-end">主要圖片</label>
                         <div class="col-sm-8">
                             <imageUrlSetterComp v-if="updateImgByDownload"
-                            @update-value="updateValue"  :img-Item="'imageUrl'"/>
+                            @update-value="updateValue" :img-Item="'imageUrl'"
+                            :img-Url="modalItemData.imageUrl"/>
                           <input v-else type="text" class="form-control" id="itemUrl"
                            placeholder="請輸入網址" v-model="modalItemData.imageUrl">
                         </div>
@@ -149,15 +159,15 @@ export default {
                     <div class="mb-3 row">
                         <label for="itemUrls1" class="col-sm-3 col-form-label text-end">其他圖片</label>
                         <div v-if="updateImgByDownload" class="col-sm-8">
-                            <imageUrlSetterComp @update-value="updateValue"
+                            <imageUrlSetterComp :img-Url="modalItemData.imagesUrl[0]" @update-value="updateValue"
                              :img-Item="'imagesUrl'" :img-Int="'0'"/>
-                             <imageUrlSetterComp @update-value="updateValue"
+                             <imageUrlSetterComp :img-Url="modalItemData.imagesUrl[1]" @update-value="updateValue"
                              :img-Item="'imagesUrl'" :img-Int="'1'"/>
-                             <imageUrlSetterComp @update-value="updateValue"
+                             <imageUrlSetterComp :img-Url="modalItemData.imagesUrl[2]" @update-value="updateValue"
                              :img-Item="'imagesUrl'" :img-Int="'2'"/>
-                             <imageUrlSetterComp @update-value="updateValue"
+                             <imageUrlSetterComp :img-Url="modalItemData.imagesUrl[3]" @update-value="updateValue"
                              :img-Item="'imagesUrl'" :img-Int="'3'"/>
-                             <imageUrlSetterComp @update-value="updateValue"
+                             <imageUrlSetterComp :img-Url="modalItemData.imagesUrl[4]" @update-value="updateValue"
                              :img-Item="'imagesUrl'" :img-Int="'4'"/>
                             </div>
                         <div v-else class="col-sm-8">

@@ -16,6 +16,7 @@ export default {
                 unit: '',
                 originPrice: '',
                 price: '',
+                starts: '',
                 imageUrl: '',
                 imagesUrl: ['', '', '', '', ''],
                 isEnabled: false
@@ -131,6 +132,7 @@ export default {
                     origin_price: this.modalItemData.originPrice,
                     price: this.modalItemData.price,
                     unit: this.modalItemData.unit,
+                    starts: this.modalItemData.starts,
                     imageUrl: this.modalItemData.imageUrl,
                     imagesUrl: this.modalItemData.imagesUrl,
                     is_enabled: this.modalItemData.isEnabled ? '1' : '0'
@@ -218,6 +220,7 @@ export default {
             this.modalItemData.originPrice = editItem.origin_price || '';
             this.modalItemData.price = editItem.price || '';
             this.modalItemData.unit = editItem.unit || '';
+            this.modalItemData.starts = editItem.starts || '';
             if (editItem.imagesUrl) {
                 editItem.imagesUrl.forEach((e, i) => {
                     this.modalItemData.imagesUrl[i] = e;
