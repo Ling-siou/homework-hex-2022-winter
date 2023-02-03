@@ -4,8 +4,8 @@
 
 import { apiUrl, adminPath } from './config.js';
 
-import checkDeleteModalTemp from './checkDeleteModalTemp.js'; 
-import editItemDataTemp from './editItemDataTemp.js';
+import componentCheckDeleteModal from './componentCheckDeleteModal.js'; 
+import componentEditItemModal from './componentEditItemModal.js';
 
 // routerComp
 const itemListComp = {
@@ -32,7 +32,7 @@ const itemListComp = {
         };
     },
     template: '#itemList',
-    components : { checkDeleteModalTemp, editItemDataTemp },
+    components : { componentCheckDeleteModal, componentEditItemModal },
     created() {
         this.getItemList();
     },
@@ -116,7 +116,7 @@ const itemListComp = {
                     alert('刪除成功');
                     this.getItemList();
                     // 若刪除正在檢視的商品，檢視id改回預設
-                    this.$refs.checkDeleteModalTemp.closeModal();
+                    this.$refs.componentCheckDeleteModal.closeModal();
                     if (this.showId === this.deleteItemId) {
                         this.showId = '';
                     }

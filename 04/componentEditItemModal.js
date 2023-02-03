@@ -24,6 +24,9 @@ const imageUrlSetterComp = {
             <p v-if="memo" class="mt-1" :class="uploadSuccess ? 'text-success' : 'text-danger'">{{ memo }}</p>
         </div>
     `,
+    mounted() {
+        this.$refs.fileInput.value = '';
+    },
     methods: {
         fileChose() {
             this.memo = '檔案上傳中，請稍等...';
