@@ -1,93 +1,11 @@
 // 在html檔案內取得vue & vue-router & axios
 
 // 共用
-const apiUrl = 'https://vue3-course-api.hexschool.io/v2/';
-const adminPath = 'jujube-in-hex';
-import checkDeleteModalTemp from './checkDeleteModalTemp.js'; 
-// import editItemDataTemp from './editItemDataTemp.js';
-const imageUrlSetterComp = {
-    props: ['imgItem', 'imgInt'],
-    data() {
-        return {
-            value: '',
-            memo:'',
-            uploadSuccess: true,
-        };
-    },
-    computed: {
-        emitData() {
-            return {
-                imgItem: this.imgItem,
-                imgInt: this.imgInt,
-                value: this.value,
-            };
-        }
-    },
-    template: '#imageUrlSetter',
-    methods: {
-        fileChose() {
-            this.memo = '檔案上傳中，請稍等...';
-            console.log(this.$refs.fileInput.files[0]);
-            const choseFile = this.$refs.fileInput.files[0];
-            let upLoadfile = new FormData();
-            upLoadfile.append('file-to-upload', choseFile);
 
-            axios.post(`${apiUrl}api/${adminPath}/admin/upload`, upLoadfile)
-            .then((res) => {
-                console.log(res.data);
-                if(res.data.success) {
-                    this.value = res.data.imageUrl;
-                    this.updateValue(res.data.imageUrl);
-                    this.uploadSuccess = true;
-                    this.memo = '上傳成功!';
-                } else {
-                    alert(res.data.message);
-                    this.uploadSuccess = false;
-                    this.memo = '上傳失敗';
-                }
-                
-            })
-            .catch((err) => {
-                console.dir(err);
-            });
-            
-        },
-        updateValue(value) {
-            console.log('in', value);
-            this.$emit('update-value', this.emitData);
-        }
-    }
-};
-const editItemDataTemp = {
-    data() {
-        return {
-            updateImgByDownload: false
-        };
-    },
-    props: ['modalModeTiele', 'modalModeNewItem', 'modalItemData', 'newThisItem', 'editItem'],
-    template: '#editItemDataTemp',
-    components: {imageUrlSetterComp},
-    computed: {
-        updateImgBtnClass() {
-            return this.updateImgByDownload ? {
-                byDownload: 'btn-primary',
-                byUrl: 'btn-outline-primary'
-            } : {
-                byDownload: 'btn-outline-primary',
-                byUrl: 'btn-primary'
-            };
-        }
-    },
-    methods: {
-        closeModal() {
-            this.$refs.closeMobal.click();
-        },
-        updateValue(val){
-            console.log('mit', val);
-            this.$emit('update-value', val);
-        }
-    }
-};
+import { apiUrl, adminPath } from './config.js';
+
+import checkDeleteModalTemp from './checkDeleteModalTemp.js'; 
+import editItemDataTemp from './editItemDataTemp.js';
 
 // routerComp
 const itemListComp = {
