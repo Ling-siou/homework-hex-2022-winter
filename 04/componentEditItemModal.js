@@ -32,14 +32,12 @@ const imageUrlSetterComp = {
     methods: {
         fileChose() {
             this.memo = '檔案上傳中，請稍等...';
-            console.log(this.$refs.fileInput.files[0]);
             const choseFile = this.$refs.fileInput.files[0];
             let upLoadfile = new FormData();
             upLoadfile.append('file-to-upload', choseFile);
 
             axios.post(`${apiUrl}api/${adminPath}/admin/upload`, upLoadfile)
             .then((res) => {
-                console.log(res.data);
                 if(res.data.success) {
                     this.value = res.data.imageUrl;
                     this.updateValue(res.data.imageUrl);
@@ -58,7 +56,6 @@ const imageUrlSetterComp = {
             
         },
         updateValue(value) {
-            console.log('in', value);
             this.$emit('update-value', this.emitData);
         }
     }
@@ -212,7 +209,6 @@ export default {
             this.$refs.closeMobal.click();
         },
         updateValue(val){
-            console.log('mit', val);
             this.$emit('update-value', val);
         }
     }

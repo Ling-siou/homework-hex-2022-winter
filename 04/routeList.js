@@ -142,7 +142,6 @@ export default {
     },
     methods: {
         setUploadImgUrl(val) {
-            // console.log(val);
             if(val.imgInt) {
                 this.modalItemData[val.imgItem][val.imgInt] = val.value;
             } else {
