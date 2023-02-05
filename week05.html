@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>week05</title>
+    <!-- 載入 bootstrapt -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 載入 vue + axios -->
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 載入 VeetValidate -->
+    <!-- 載入 VueLoading -->
+    <style>
+        .product-img{
+            height: 60px;
+            width: 60px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+        html:
+        商品列表
+        購物車統計
+        表單
+
+        js:
+        取得商品們
+        選取商品
+        計算選取總和
+        串接表單
+        整理檔案
+     -->
+    <div id="app">
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-7">
+                    <!-- 放商品 -->
+                    <h2>商品列表</h2>
+                    <products-comp @get-id="addItemInCart"></products-comp>
+                </div>
+                <div class="col-md-5">
+                    <!-- 放表單 -->
+                    <h2>購物車列表</h2>
+                    <cart-list></cart-list>
+                    <button type="button" @click="getPage">ki</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./05/all.js" type="module"></script>
+</body>
+</html>
