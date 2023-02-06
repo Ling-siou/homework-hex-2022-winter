@@ -1,15 +1,23 @@
 import { apiUrl, adminPath } from './config.js';
 
+import modalComp from './modalComp.js';
+
 export default {
+prop: ['getCartData'],
 data() {
     return {
         productList: [],
-        cartList: [],
-        focusProductId: ''
+        focusProductId: '',
+        isLoading: false,
     };
+},
+components: {
+    modalComp
 },
 template: `
     <div>
+    <loading v-model:active="isLoading"/>
+    <modal-comp :item="focusProduct" ref="itemModal"></modal-comp>
          <table class="table">
             <thead>
                 <tr>
@@ -28,7 +36,7 @@ template: `
                     </td>
                     <td class="align-middle">
                         <p v-if="product.price !== product.origin_price">
-                        <span class="text-decoration-line-through">
+                        <span class="text-decoration-line-through text-secondary">
                             {{product.origin_price}}</span> <span class="font-monospace">{{product.price}}元</span></p>
                         <p v-else class="font-monospace">
                             {{product.price}}元
@@ -42,7 +50,8 @@ template: `
                         </div>
                         <button type="button" class="btn btn-outline-primary btn-sm me-2"
                             @click="putProductInCart(product.id)">加入購物車</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm">看細節</button>
+                        <button type="button" class="btn btn-outline-info btn-sm"
+                        @click="showItem(product.id)">看細節</button>
                     </td>
                  </tr>
             </tbody>
@@ -51,25 +60,40 @@ template: `
 `,
 computed: {
     focusProduct() {
-        return this.focusProductId ? this.getProductById(this.focusProductId) : {};
+        const product = this.productList.find((e) => e.id === this.focusProductId);
+        return this.focusProductId ? product : {};
     }
 },
-created() {
-    axios.get(`${apiUrl}api/${adminPath}/products/all?page=2`)
+mounted() {
+    this.isLoading = true;
+    axios.get(`${apiUrl}api/${adminPath}/products/all`)
     .then((res) => {
-        this.productList = res.data.products;
-        console.log(res);
+        console.log(res.data);
+        this.productList = [...res.data.products];
+        this.isLoading = false;
     })
     .catch((err) => {
         console.dir(err);
     });
 },
 methods: {
+    showItem(id) {
+        this.focusProductId = id;
+        this.$refs.itemModal.openModal();
+    },
+    yourCallbackMethod() {
+        console.log('yourCallbackMethod');
+    },
     getProductById(id) {
-        const product = this.productList.filters((e) => e.id = id)[0];
+        console.log(id);
+        const product = this.productList.find((e) => e.id = id);
         return product;
     },
+    resetCartData() {
+        this.$emit('reset-cart-data');
+    },
     putProductInCart(id) {
+        this.isLoading = true;
         const qty = this.$refs['qty'+id][0].value;
         const productDatqtya = {
             "data": {
@@ -80,7 +104,8 @@ methods: {
 
         axios.post(`${apiUrl}api/${adminPath}/cart`, productDatqtya)
         .then((res) => {
-            console.log(res);
+            this.isLoading = false;
+            this.resetCartData();
         })
         .catch((err) => {
             console.dir(err);

@@ -5,49 +5,62 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>week05</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2"></script>
     <!-- 載入 bootstrapt -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- 載入 vue + axios -->
-    <script src="https://unpkg.com/vue@3"></script>
+    <!-- <script src="https://unpkg.com/vue@3"></script> -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <!-- 載入 VeetValidate -->
     <!-- 載入 VueLoading -->
+    <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@6"></script>
+    <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@6/dist/css/index.css" rel="stylesheet">
     <style>
         .product-img{
             height: 60px;
             width: 60px;
             object-fit: cover;
         }
+
+        .image-in-flex{
+            height: 120px;
+            width: auto;
+        }
     </style>
 </head>
 <body>
     <!-- 
         html:
-        商品列表
-        購物車統計
+        商品列表 V
+        購物車統計 V
         表單
 
         js:
-        取得商品們
-        選取商品
-        計算選取總和
+        取得商品們 V
+        選取商品 V
+        計算選取總和 V
+        刪除修改商品
         串接表單
         整理檔案
+        Loading V
      -->
     <div id="app">
+        <loading v-model:active="isLoading"></loading>
         <div class="container mt-4">
             <div class="row">
-                <div class="col-md-7">
+                <div class="col-md-12">
                     <!-- 放商品 -->
-                    <h2>商品列表</h2>
-                    <products-comp @get-id="addItemInCart"></products-comp>
+                    <h3>商品列表</h3>
+                    <products-comp @reset-cart-data="getCartData"></products-comp>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-6">
                     <!-- 放表單 -->
-                    <h2>購物車列表</h2>
-                    <cart-list></cart-list>
-                    <button type="button" @click="getPage">ki</button>
+                    <h3>購物車內容</h3>
+                    <cart-list @reset-cart-data="getCartData" :cart-list="cartList"></cart-list>
+                </div>
+                <div class="col-md-6">
+                    <h3>付款資料</h3>
                 </div>
             </div>
         </div>
