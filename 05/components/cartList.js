@@ -1,5 +1,5 @@
-import { apiUrl, adminPath } from './config.js';
-import componentCheckDeleteModal from './componentCheckDeleteModal.js';
+import { apiUrl, adminPath } from '../js/config.js';
+import checkDeleteModal from './checkDeleteModal.js';
 const cartTrComp = {
     data(){
         return {
@@ -103,11 +103,11 @@ export default {
             isLoading: false
         };
     },
-    components: { cartTrComp, componentCheckDeleteModal },
+    components: { cartTrComp, checkDeleteModal },
     template: `
     <div>
         <loading v-model:active="isLoading"/>
-        <componentCheckDeleteModal :delete-all-product="deleteAllProduct" 
+        <checkDeleteModal :delete-all-product="deleteAllProduct" 
         ref="checkModal" />   
         <div class="text-end mb-3">
         <button type="button" class="btn btn-outline-danger btn-sm"

@@ -1,6 +1,6 @@
-import { apiUrl, adminPath } from './config.js';
+import { apiUrl, adminPath } from '../js/config.js';
 
-import modalComp from './modalComp.js';
+import showSingleItemModal from './showSingleItemModal.js';
 
 export default {
 prop: ['getCartData'],
@@ -12,12 +12,12 @@ data() {
     };
 },
 components: {
-    modalComp
+    showSingleItemModal
 },
 template: `
     <div>
     <loading v-model:active="isLoading"/>
-    <modal-comp :item="focusProduct" ref="itemModal"></modal-comp>
+    <show-single-item-modal :item="focusProduct" ref="itemModal"></show-single-item-modal>
          <table class="table">
             <thead>
                 <tr>

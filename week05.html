@@ -52,10 +52,10 @@
         <loading v-model:active="isLoading"></loading>
         <div class="container mt-4">
             <div class="row">
-                <div class="col-md-12" v-show="false">
-                    <!-- 放商品 -->
+                <div class="col-md-12">
+                    <!-- 放商品 v-show="false" -->
                     <h3>商品列表</h3>
-                    <products-comp @reset-cart-data="getCartData"></products-comp>
+                    <products @reset-cart-data="getCartData"></products>
                 </div>
                 <div class="col-md-6">
                     <!-- 放表單 -->

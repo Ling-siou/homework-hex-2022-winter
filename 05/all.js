@@ -1,10 +1,10 @@
 // import {createApp, component} from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.esm-browser.min.js';
 
-import { apiUrl, adminPath } from './config.js';
-import productsComp from './productsComp.js';
-import cartList from './cartList.js';
+import { apiUrl, adminPath } from './js/config.js';
+import products from './components/products.js';
+import cartList from './components/cartList.js';
 
-VeeValidateI18n.loadLocaleFromURL('./05/zh_TW.json');
+VeeValidateI18n.loadLocaleFromURL('./05/sorce/zh_TW.json');
 
 Object.keys(VeeValidateRules).forEach(rule => {
     if (rule !== 'default') {
@@ -27,7 +27,7 @@ const app = Vue.createApp({
         };
     },
     components: {
-        productsComp,
+        products,
         cartList
     },
     created() {
