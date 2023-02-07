@@ -4,14 +4,26 @@ import { apiUrl, adminPath } from './config.js';
 import productsComp from './productsComp.js';
 import cartList from './cartList.js';
 
+VeeValidateI18n.loadLocaleFromURL('./05/zh_TW.json');
 
+Object.keys(VeeValidateRules).forEach(rule => {
+    if (rule !== 'default') {
+      VeeValidate.defineRule(rule, VeeValidateRules[rule]);
+    }
+  });
+
+VeeValidate.configure({
+    generateMessage: VeeValidateI18n.localize('zh_TW'),
+    validateOnInput: true, // 調整為：輸入文字時，就立即進行驗證
+  });
 
 const app = Vue.createApp({
     data() {
         return {
             cartList:[],
             text: '預設',
-            isLoading: false
+            isLoading: false,
+            user: {}
         };
     },
     components: {
@@ -22,8 +34,8 @@ const app = Vue.createApp({
         this.getCartData();
     },
     methods: {
-        test(val) {
-            console.log(`addItemInCart`, val);
+        onSubmit() {
+            console.log(`onSubmit`);
         },
         getCartData() {
             this.isLoading = true;
@@ -41,6 +53,9 @@ const app = Vue.createApp({
 
 // app.use(router);
 app.use(VueLoading.LoadingPlugin);
-app.component('loading', VueLoading.Component)
+app.component('loading', VueLoading.Component);
+app.component('VForm', VeeValidate.Form);
+app.component('VField', VeeValidate.Field);
+app.component('ErrorMessage', VeeValidate.ErrorMessage);
 app.mount('#app');
 

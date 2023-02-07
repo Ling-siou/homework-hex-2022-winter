@@ -111,7 +111,7 @@ export default {
         ref="checkModal" />   
         <div class="text-end mb-3">
         <button type="button" class="btn btn-outline-danger btn-sm"
-        @click="deleteCheck">清空購物車</button></div>
+        @click="deleteCheck" :disabled="this.cartList.length === 0">清空購物車</button></div>
         <table class="table table-striped border">
             <thead>
                 <tr>
