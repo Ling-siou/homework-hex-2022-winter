@@ -58,13 +58,12 @@ const cartTrComp = {
               };
             axios.put(`${apiUrl}api/${adminPath}/cart/${id}`, data)
             .then((res) => {
-                console.log(res);
-                this.setIsLoading(false);
                 this.$emit('reset-cart-data');
             })
             .catch((err) => {
-                console.dir(err);
                 alert(err.response.data.message);
+            })
+            .then(() => {
                 this.setIsLoading(false);
             });
         },
@@ -72,13 +71,12 @@ const cartTrComp = {
             this.setIsLoading(true);
             axios.delete(`${apiUrl}api/${adminPath}/cart/${id}`)
             .then((res) => {
-                console.log(res);
-                this.setIsLoading(false);
                 this.$emit('reset-cart-data');
             })
             .catch((err) => {
-                console.dir(err);
                 alert(err.response.data.message);
+            })
+            .then(() => {
                 this.setIsLoading(false);
             });
         },
@@ -131,6 +129,7 @@ export default {
         </table>
         <p v-if="dataChange" class="text-end text-danger">您的商品數量尚在調整中, 請儲存或取消後方能計算總額</p>
         <p v-else class="text-end">總計: {{orgTotal}} <span class="fs-6 ms-2">折扣價: {{total}}</span></p>
+        <button type="button" @click="test">test _</button>
     </div>
     `,
     computed: {
@@ -148,6 +147,10 @@ export default {
         }
     },
     methods: {
+        test() {
+            const de = _.debounce(()=>{ console.log(123)},1000);
+            de();
+        },
         newQty(val){
             this.dataChange = val;
         },
@@ -165,12 +168,12 @@ export default {
             axios.delete(`${apiUrl}api/${adminPath}/carts`)
             .then((res) => {
                 this.$refs.checkModal.closeModal();
-                this.setIsLoading(false);
                 this.$emit('reset-cart-data');
             })
             .catch((err) => {
-                console.dir(err);
                 alert(err.response.data.message);
+            })
+            .then(() => {
                 this.setIsLoading(false);
             });
         },

@@ -19,6 +19,7 @@
     <!-- 載入 VueLoading -->
     <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@6"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@6/dist/css/index.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" integrity="sha256-qXBd/EfAdjOA2FGrGAG+b3YBn2tn5A6bhz+LSgYD96k=" crossorigin="anonymous"></script>
     <style>
         .product-img{
             height: 60px;
@@ -53,7 +54,7 @@
         <div class="container mt-4">
             <div class="row">
                 <div class="col-md-12">
-                    <!-- 放商品 v-show="false" -->
+                    <!-- 放商品 -->
                     <h3>商品列表</h3>
                     <products @reset-cart-data="getCartData"></products>
                 </div>
@@ -63,66 +64,7 @@
                     <cart-list @reset-cart-data="getCartData" :cart-list="cartList"></cart-list>
                 </div>
                 <div class="col-md-6">
-                    <h3>付款資料</h3>
-                    <v-form v-slot="{ errors }" @submit="onSubmit" >
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <v-field
-                                id="email"
-                                name="email"
-                                type="email"
-                                class="form-control"
-                                :class="{ 'is-invalid': errors['email'] }"
-                                placeholder="請輸入 Email" rules="email|required"
-                                v-model="user.email"
-                                ></v-field>
-                                <error-message name="email" class="invalid-feedback"></error-message>
-                        </div>
-                        <div class="mb-3">
-                            <label for="name" class="form-label">收件人姓名</label>
-                            <v-field
-                            id="name"
-                            name="姓名"
-                            type="text"
-                            class="form-control"
-                            :class="{ 'is-invalid': errors['姓名'] }"
-                            placeholder="請輸入 姓名" rules="required"
-                            v-model="user.name"
-                            ></v-field>
-                            <error-message name="姓名" class="invalid-feedback"></error-message>
-                        </div>
-                        <div class="mb-3">
-                            <label for="name" class="form-label">收件人行動電話</label>
-                            <v-field
-                            id="phone"
-                            name="行動電話"
-                            type="text"
-                            class="form-control"
-                            :class="{ 'is-invalid': errors['行動電話'] }"
-                            placeholder="請輸入 行動電話" rules="numeric|required|length:10"
-                            v-model="user.phone"
-                            ></v-field>
-                            <error-message name="行動電話" class="invalid-feedback"></error-message>
-                        </div>
-                        <div class="mb-3">
-                            <label for="name" class="form-label">收件人地址</label>
-                            <v-field
-                            id="email"
-                            name="地址"
-                            type="text"
-                            class="form-control"
-                            :class="{ 'is-invalid': errors['地址'] }"
-                            placeholder="請輸入 地址" rules="required"
-                            v-model="user.address"
-                            ></v-field>
-                            <error-message name="地址" class="invalid-feedback"></error-message>
-                        </div>
-                        <div class="mb-3">
-                            <label for="message" class="form-label">留言</label>
-                            <textarea id="message" class="form-control" cols="30" rows="5" ></textarea>
-                        </div>
-                        <button type="submit">submit</button>
-                    </v-form>
+                    <order-form @reset-cart-data="getCartData"></order-form>
                 </div>
             </div>
         </div>

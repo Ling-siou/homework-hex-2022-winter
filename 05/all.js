@@ -3,6 +3,7 @@
 import { apiUrl, adminPath } from './js/config.js';
 import products from './components/products.js';
 import cartList from './components/cartList.js';
+import orderForm from './components/orderForm.js';
 
 VeeValidateI18n.loadLocaleFromURL('./05/sorce/zh_TW.json');
 
@@ -22,30 +23,29 @@ const app = Vue.createApp({
         return {
             cartList:[],
             text: '預設',
-            isLoading: false,
-            user: {}
+            isLoading: false
         };
     },
     components: {
         products,
-        cartList
+        cartList,
+        orderForm
     },
     created() {
         this.getCartData();
     },
     methods: {
-        onSubmit() {
-            console.log(`onSubmit`);
-        },
         getCartData() {
             this.isLoading = true;
             axios.get(`${apiUrl}api/${adminPath}/cart`)
             .then((res) => {
                 this.cartList = res.data?.data?.carts;
-                this.isLoading = false;
             })
             .catch((err) => {
                 alert(err.response.data.message);
+            })
+            .then(() => {
+                this.isLoading = false;
             });
         }
     },

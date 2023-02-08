@@ -70,11 +70,13 @@ mounted() {
     .then((res) => {
         console.log(res.data);
         this.productList = [...res.data.products];
-        this.isLoading = false;
     })
     .catch((err) => {
-        console.dir(err);
-    });
+        alert(err.response.data.message);
+    })
+    .then(() => {
+        this.isLoading = false;
+    });;
 },
 methods: {
     showItem(id) {
@@ -104,11 +106,14 @@ methods: {
 
         axios.post(`${apiUrl}api/${adminPath}/cart`, productDatqtya)
         .then((res) => {
-            this.isLoading = false;
+            console.log(res);
             this.resetCartData();
         })
         .catch((err) => {
-            console.dir(err);
+            alert(err.response.data.message);
+        })
+        .then(() => {
+            this.isLoading = false;
         });
 
     }
