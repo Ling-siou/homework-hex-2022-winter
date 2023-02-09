@@ -69,7 +69,6 @@ mounted() {
     this.isLoading = true;
     axios.get(`${apiUrl}api/${adminPath}/products/all`)
     .then((res) => {
-        console.log(res.data);
         this.productList = [...res.data.products];
     })
     .catch((err) => {
@@ -84,11 +83,7 @@ methods: {
         this.focusProductId = id;
         this.$refs.itemModal.openModal();
     },
-    yourCallbackMethod() {
-        console.log('yourCallbackMethod');
-    },
     getProductById(id) {
-        console.log(id);
         const product = this.productList.find((e) => e.id = id);
         return product;
     },
@@ -107,7 +102,6 @@ methods: {
 
         axios.post(`${apiUrl}api/${adminPath}/cart`, productDatqtya)
         .then((res) => {
-            console.log(res);
             this.resetCartData();
         })
         .catch((err) => {
