@@ -24,7 +24,8 @@ export default {
             modalModeNewItem: true,
             editItemId: '',
             deleteItemId: '',
-            deleteItemName: ''
+            deleteItemName: '',
+            pagination: {},
         };
     },
     template: `
@@ -79,6 +80,21 @@ export default {
                 </tbody>
                 </table>
                 <p>目前有 {{ products.length }} 項產品</p>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" :class="pagination.has_pre ? '' : 'disabled'" href="#"
+                            @click.prevent="goBesidePage(-1)">
+                                <i class="bi bi-chevron-left"></i></a></li>
+                        <li class="page-item" v-for="page in pagination.total_pages" :key="page"
+                        :class="pagination.current_page == page ? 'active' : ''">
+                            <a class="page-link" href="#" @click.prevent="goPage(page)">{{page}}</a></li>
+                        <li class="page-item">
+                            <a class="page-link" :class="pagination.has_next ? '' : 'disabled'" href="#"
+                            @click.prevent="goBesidePage(1)">
+                                <i class="bi bi-chevron-right"></i></a></li>
+                    </ul>
+                </nav>
             </div>
             <div class="col-xl-7 col-md-6 col-xs-12 bg-light p-3">
                 <!-- 單一展示 -->
@@ -112,6 +128,16 @@ export default {
     `,
     components : { componentCheckDeleteModal, componentEditItemModal },
     created() {
+        axios.post(`${apiUrl}api/user/check`, {})
+            .then(() => {
+            })
+            .catch((err) => {
+                alert(err.response.data.message)
+                this.$router.push({
+                    path: '/'
+                });
+            });
+
         this.getItemList();
     },
     computed: {
@@ -138,6 +164,9 @@ export default {
                     is_enabled: this.modalItemData.isEnabled ? '1' : '0'
                 }
             };
+        },
+        getPageNow() {
+            return this.$route.query.page || 1
         }
     },
     methods: {
@@ -147,7 +176,6 @@ export default {
             } else {
                 this.modalItemData[val.imgItem] = val.value;
             }
-
         },
         deleteCheckModal(id, name) {
             var checkModal = new bootstrap.Modal(document.getElementById('checkModal'));
@@ -160,9 +188,10 @@ export default {
             return detialDate || '';
         },
         getItemList() {
-            axios.get(`${apiUrl}api/${adminPath}/admin/products`)
+            axios.get(`${apiUrl}api/${adminPath}/admin/products?page=${this.getPageNow}`)
                 .then((res) => {
                     this.products = res.data.products;
+                    this.pagination = res.data.pagination;
                 })
                 .catch((err) => {
                     alert(err.response.data.message);
@@ -253,6 +282,18 @@ export default {
                 .catch((err => {
                     alert(err.response.data.message);
                 }));
+        },
+        goPage(page) {
+            this.$router.push(`/list?page=${page}`)
+        },
+        goBesidePage(page) {
+            const goPage = parseInt(this.getPageNow) + parseInt(page)
+            this.$router.push(`/list?page=${goPage}`)
+        }
+    },
+    watch: {
+        getPageNow() {
+            this.getItemList()
         }
     }
 };

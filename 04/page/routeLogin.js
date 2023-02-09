@@ -26,15 +26,6 @@ export default {
           <router-link to="/list">Go to List</router-link>
         </div>
     `,
-    created() {
-        axios.post(`${apiUrl}api/user/check`, {})
-            .then((res) => {
-                alert('歡迎回來');
-                this.$router.push({
-                    path: '/list'
-                });
-            });
-    },
     methods: {
         login() {
             const loginData = {
