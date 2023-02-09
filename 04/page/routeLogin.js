@@ -1,4 +1,4 @@
-import { apiUrl } from './config.js';
+import { apiUrl } from '../js/config.js';
 
 export default {
     data() {

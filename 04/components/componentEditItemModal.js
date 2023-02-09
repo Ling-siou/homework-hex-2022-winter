@@ -1,4 +1,4 @@
-import { apiUrl, adminPath } from './config.js';
+import { apiUrl, adminPath } from '../js/config.js';
 
 const imageUrlSetterComp = {
     props: ['imgItem', 'imgInt', 'imgUrl'],

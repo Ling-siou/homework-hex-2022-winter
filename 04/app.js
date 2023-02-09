@@ -1,8 +1,8 @@
 // 已在html檔案內取得vue & vue-router & axios
 
 // routerComp
-import itemListComp from './routeList.js'; 
-import loginComp from './routeLogin.js'; 
+import itemListComp from './page/routeList.js'; 
+import loginComp from './page/routeLogin.js'; 
 
 // routes
 const routes = [{

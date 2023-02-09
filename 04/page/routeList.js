@@ -1,7 +1,7 @@
-import { apiUrl, adminPath } from './config.js';
+import { apiUrl, adminPath } from '../js/config.js';
 
-import componentCheckDeleteModal from './componentCheckDeleteModal.js'; 
-import componentEditItemModal from './componentEditItemModal.js';
+import componentCheckDeleteModal from '../components/componentCheckDeleteModal.js'; 
+import componentEditItemModal from '../components/componentEditItemModal.js';
 
 export default {
     data() {
