@@ -119,7 +119,7 @@ export default {
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">商品名</th>
-                    <th scope="col">價格</th>
+                    <th scope="col">單價</th>
                     <th scope="col">數量</th>
                     <th scope="col">功能</th>
                 </tr>
