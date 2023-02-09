@@ -23,6 +23,7 @@ export default {
                 <button type="submit" class="btn btn-primary text-center" @click.prevent="login">登入</button>
             </div>
           </form>
+          <button type="button" @click.prevent="getCookie()">Cookie</button>
           <router-link to="/list">Go to List</router-link>
         </div>
     `,
@@ -34,9 +35,8 @@ export default {
             };
             axios.post(`${apiUrl}admin/signin`, loginData)
                 .then((res) => {
-                    window.localStorage.setItem('token', res.data.token);
-                    // 登入後預設後續的 headers 'Authorization'
-                    axios.defaults.headers.common['Authorization'] = window.localStorage.getItem('token');
+                    document.cookie = `expired=${res.data.expired}`
+                    document.cookie = `token=${res.data.token}`
                     alert('登入成功');
                     this.$router.push({
                         path: '/list'

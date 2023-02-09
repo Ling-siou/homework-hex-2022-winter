@@ -1,17 +1,17 @@
 // 已在html檔案內取得vue & vue-router & axios
 
-// routerComp
-import itemListComp from './page/routeList.js'; 
-import loginComp from './page/routeLogin.js'; 
+// routerPages
+import itemListPage from './page/routeList.js'; 
+import loginPage from './page/routeLogin.js'; 
 
 // routes
 const routes = [{
         path: '/list',
-        component: itemListComp
+        component: itemListPage
     },
     {
         path: '/',
-        component: loginComp
+        component: loginPage
     }
 ];
 
@@ -20,12 +20,6 @@ const router = VueRouter.createRouter({
     routes,
 });
 
-const appDate = {
-    // 內容在各route中
-    created() {
-        // 預設後續的 headers 'Authorization'
-        axios.defaults.headers.common['Authorization'] = window.localStorage.getItem('token');
-    }
-};
+const appDate = {};
 
 Vue.createApp(appDate).use(router).mount('#app');

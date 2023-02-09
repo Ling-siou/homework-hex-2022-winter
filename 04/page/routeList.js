@@ -128,8 +128,19 @@ export default {
     `,
     components : { componentCheckDeleteModal, componentEditItemModal },
     created() {
+        const now = new Date();
+        if ( now > this.getCookieData('expired') ) {
+            alert('認證已過期, 請重新登入')
+            this.$router.push({
+                path: '/'
+            });
+        }
+        // 預設後續所有 headers
+        axios.defaults.headers.common['Authorization'] = this.getCookieData('token');
+        
         axios.post(`${apiUrl}api/user/check`, {})
             .then(() => {
+                this.getItemList();
             })
             .catch((err) => {
                 alert(err.response.data.message)
@@ -137,8 +148,6 @@ export default {
                     path: '/'
                 });
             });
-
-        this.getItemList();
     },
     computed: {
         modalModeTiele() {
@@ -170,6 +179,15 @@ export default {
         }
     },
     methods: {
+        getCookieData(key) {
+            const cookieStr = (`; ${document.cookie}`)
+            const cookieSplit = cookieStr.split(`; ${key}=`)
+            let getCookieValue = ''
+            if( cookieSplit.length === 2 ){
+                getCookieValue = cookieSplit[1].split(';')[0]
+            }
+            return getCookieValue
+        },
         setUploadImgUrl(val) {
             if(val.imgInt) {
                 this.modalItemData[val.imgItem][val.imgInt] = val.value;
