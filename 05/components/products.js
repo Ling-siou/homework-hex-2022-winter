@@ -27,7 +27,8 @@ template: `
                 <tr>
                     <th scope="col">產品名稱</th>
                     <th scope="col">縮圖</th>
-                    <th scope="col">價格</th>
+                    <th scope="col">單位</th>
+                    <th scope="col">單價</th>
                     <th scope="col">功能</th>
                 </tr>
             </thead>
@@ -37,6 +38,9 @@ template: `
                     <td class="align-middle">{{product.title}}</td>
                     <td>
                     <img :src="product.imageUrl" class="product-img" />
+                    </td>
+                    <td class="align-middle">
+                    {{product.unit}}
                     </td>
                     <td class="align-middle">
                         <p v-if="product.price !== product.origin_price">
