@@ -3,7 +3,8 @@ import checkDeleteModal from './checkDeleteModal.js';
 const cartTrComp = {
     data(){
         return {
-            newQty: 1
+            newQty: '',
+            inputDisabled: false
         };
     },
     props: ['item', 'int'],
@@ -22,17 +23,12 @@ const cartTrComp = {
             <td class="align-middle">
         <div class="d-inline-block me-1" style="width:60px">
             <input type="number" class="form-control form-control-sm"
-            :ref="'qty'+item.id" v-model="newQty" min=1 @change="dataChange">
+            :ref="'qty'+item.id" v-model="newQty" min=1 :disabled="inputDisabled">
         </div>
         </td>
         <td class="align-middle">
-            <button v-if="item.qty === newQty" class="btn btn-outline-danger btn-sm"
+            <button :disabled="inputDisabled" class="btn btn-outline-danger btn-sm"
             @click="deleteProduct(item.id)">刪除</button>
-            <div v-else>
-                <button class="btn btn-sm me-2" :class="item.qty === newQty ? 'btn-outline-dark' : 'btn-outline-primary'"
-                @click="editQty(item.id)">修改</button>
-                <button class="btn btn-outline-dark btn-sm" @click="resetQty">取消</button>
-            </div>
         </td>
     </tr>
     `,
@@ -40,31 +36,34 @@ const cartTrComp = {
         this.resetQty();
     },
     methods: {
-        dataChange() {
-            console.log('dataChange',this.newQty,this.item.qty);
-            this.$emit('data-change', this.newQty !== this.item.qty);
-        },
         resetQty() {
             this.newQty = this.item.qty;
-            this.dataChange();
         },
-        editQty(id) {
-            this.setIsLoading(true);
+        debounceEditQty: _.debounce( (vm)=>{
+                vm.editQty()
+            }  , 1000, {
+                leading: false,
+                trailing: true,
+                maxWait: 2000
+            }),
+        editQty() {
+            this.inputDisabled = true;
             const data = {
                 "data": {
-                  "product_id": id,
+                  "product_id": this.item.id,
                   "qty": this.newQty
                 }
               };
-            axios.put(`${apiUrl}api/${adminPath}/cart/${id}`, data)
+            axios.put(`${apiUrl}api/${adminPath}/cart/${this.item.id}`, data)
             .then((res) => {
                 this.$emit('reset-cart-data');
+                this.$emit('toast-open');
             })
             .catch((err) => {
                 alert(err.response.data.message);
             })
             .then(() => {
-                this.setIsLoading(false);
+                this.inputDisabled = false;
             });
         },
         deleteProduct(id) {
@@ -85,11 +84,12 @@ const cartTrComp = {
         },
     },
     watch: {
-        'item.qty'(val) {
-            this.newQty = val;
-            this.dataChange();
-        },
-
+        newQty(val, oldVal) {
+            if(val !== oldVal && oldVal !== '') {
+                const vm = this;
+                this.debounceEditQty(vm)
+            }
+        }
     }
 };
 
@@ -97,7 +97,6 @@ export default {
     props: ['cartList'],
     data() {
         return {
-            dataChange: false,
             isLoading: false
         };
     },
@@ -105,11 +104,20 @@ export default {
     template: `
     <div>
         <loading v-model:active="isLoading"/>
+        <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" >
+            <div ref="liveToast" class="toast text-success" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+                <div class="toast-body">
+                    數量修改完成!
+                </div>
+            </div>
+        </div>
         <checkDeleteModal :delete-all-product="deleteAllProduct" 
-        ref="checkModal" />   
-        <div class="text-end mb-3">
-        <button type="button" class="btn btn-outline-danger btn-sm"
-        @click="deleteCheck" :disabled="this.cartList.length === 0">清空購物車</button></div>
+        ref="checkModal" /> 
+        <div class="d-flex align-items-center mb-2 pt-3">
+        <h3 class="mb-0">購物車內容</h3>
+        <button type="button" class="btn btn-outline-danger btn-sm ms-auto align-self-center"
+        @click="deleteCheck" :disabled="this.cartList.length === 0">清空購物車</button>
+        </div>  
         <table class="table table-striped border">
             <thead>
                 <tr>
@@ -122,14 +130,11 @@ export default {
             </thead>
             <tbody>
                 <cartTrComp v-for="(item, int) in cartList" :key="item.id"
-                :item="item" :int="int" @data-change="newQty"
-                @set-is-loading="setIsLoading"
-                @reset-cart-data="getCartData"></cartTrComp>
+                :item="item" :int="int"                 @set-is-loading="setIsLoading"
+                @reset-cart-data="getCartData" @toast-open="toastOpen"></cartTrComp>
             </tbody>
         </table>
-        <p v-if="dataChange" class="text-end text-danger">您的商品數量尚在調整中, 請儲存或取消後方能計算總額</p>
-        <p v-else class="text-end">總計: {{orgTotal}} <span class="fs-6 ms-2">折扣價: {{total}}</span></p>
-        <button type="button" @click="test">test _</button>
+        <p class="text-end">總計: {{orgTotal}} <span class="fs-6 ms-2">折扣價: {{total}}</span></p>
     </div>
     `,
     computed: {
@@ -147,12 +152,9 @@ export default {
         }
     },
     methods: {
-        test() {
-            const de = _.debounce(()=>{ console.log(123)},1000);
-            de();
-        },
-        newQty(val){
-            this.dataChange = val;
+        toastOpen() {
+            const toast = new bootstrap.Toast(this.$refs.liveToast)
+            toast.show();
         },
         setIsLoading(val) {
             this.isLoading = val;

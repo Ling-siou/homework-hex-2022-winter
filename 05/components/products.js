@@ -15,7 +15,8 @@ components: {
     showSingleItemModal
 },
 template: `
-    <div>
+    <div class="mt-3">
+    <h3>購物車內容</h3>
     <loading v-model:active="isLoading"/>
     <show-single-item-modal :item="focusProduct" ref="itemModal"></show-single-item-modal>
          <table class="table">

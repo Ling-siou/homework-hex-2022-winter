@@ -75,7 +75,9 @@ export default {
             <label for="message" class="form-label">留言</label>
             <textarea id="message" class="form-control" cols="30" rows="5" v-model="message"></textarea>
         </div>
-        <button type="submit">submit</button>
+        <div class="text-end">
+        <button type="submit" class="btn btn-primary">確認結帳</button>
+        </div>
     </v-form>
     </div>
     `,

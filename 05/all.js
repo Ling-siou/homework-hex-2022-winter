@@ -32,11 +32,13 @@ const app = Vue.createApp({
         orderForm
     },
     created() {
-        this.getCartData();
+        this.getCartData(true);
     },
     methods: {
-        getCartData() {
-            this.isLoading = true;
+        getCartData(loading) {
+            if(loading) {
+                this.isLoading = true;
+            }
             axios.get(`${apiUrl}api/${adminPath}/cart`)
             .then((res) => {
                 this.cartList = res.data?.data?.carts;
@@ -45,7 +47,9 @@ const app = Vue.createApp({
                 alert(err.response.data.message);
             })
             .then(() => {
+                if(loading) {
                 this.isLoading = false;
+                }
             });
         }
     },
