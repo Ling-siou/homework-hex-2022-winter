@@ -1,5 +1,6 @@
 import { apiUrl, adminPath } from '../js/config.js';
 import checkDeleteModal from './checkDeleteModal.js';
+import toast from './toast.js';
 const cartTrComp = {
     data(){
         return {
@@ -97,20 +98,15 @@ export default {
     props: ['cartList'],
     data() {
         return {
-            isLoading: false
+            isLoading: false,
+            cartEditSuccess: '數量修改完成!'
         };
     },
-    components: { cartTrComp, checkDeleteModal },
+    components: { cartTrComp, checkDeleteModal, toast },
     template: `
     <div>
         <loading v-model:active="isLoading"/>
-        <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" >
-            <div ref="liveToast" class="toast text-success" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
-                <div class="toast-body">
-                    數量修改完成!
-                </div>
-            </div>
-        </div>
+        <toast ref="liveToast" :success-font="cartEditSuccess" />
         <checkDeleteModal :delete-all-product="deleteAllProduct" 
         ref="checkModal" /> 
         <div class="d-flex align-items-center mb-2 pt-3">
@@ -153,8 +149,7 @@ export default {
     },
     methods: {
         toastOpen() {
-            const toast = new bootstrap.Toast(this.$refs.liveToast)
-            toast.show();
+            this.$refs.liveToast.toastOpen()
         },
         setIsLoading(val) {
             this.isLoading = val;

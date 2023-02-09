@@ -1,6 +1,7 @@
 import { apiUrl, adminPath } from '../js/config.js';
 
 import showSingleItemModal from './showSingleItemModal.js';
+import toast from './toast.js';
 
 export default {
 prop: ['getCartData'],
@@ -9,15 +10,17 @@ data() {
         productList: [],
         focusProductId: '',
         isLoading: false,
+        cartEditSuccess: '已加入購物車!'
     };
 },
 components: {
-    showSingleItemModal
+    showSingleItemModal, toast
 },
 template: `
     <div class="mt-3">
     <h3>購物車內容</h3>
     <loading v-model:active="isLoading"/>
+    <toast ref="liveToast" :success-font="cartEditSuccess" />
     <show-single-item-modal :item="focusProduct" ref="itemModal"></show-single-item-modal>
          <table class="table">
             <thead>
@@ -79,6 +82,9 @@ mounted() {
     });;
 },
 methods: {
+    toastOpen() {
+        this.$refs.liveToast.toastOpen()
+    },
     showItem(id) {
         this.focusProductId = id;
         this.$refs.itemModal.openModal();
@@ -103,6 +109,8 @@ methods: {
         axios.post(`${apiUrl}api/${adminPath}/cart`, productDatqtya)
         .then((res) => {
             this.resetCartData();
+            this.toastOpen();
+            this.$refs['qty'+id][0].value = 1;
         })
         .catch((err) => {
             alert(err.response.data.message);
