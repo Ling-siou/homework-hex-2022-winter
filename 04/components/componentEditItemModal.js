@@ -51,7 +51,7 @@ const imageUrlSetterComp = {
                 
             })
             .catch((err) => {
-                console.dir(err);
+                alert(err.response.data.message);
             });
             
         },
