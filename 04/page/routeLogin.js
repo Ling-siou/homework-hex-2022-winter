@@ -23,7 +23,6 @@ export default {
                 <button type="submit" class="btn btn-primary text-center" @click.prevent="login">登入</button>
             </div>
           </form>
-          <button type="button" @click.prevent="getCookie()">Cookie</button>
           <router-link to="/list">Go to List</router-link>
         </div>
     `,
