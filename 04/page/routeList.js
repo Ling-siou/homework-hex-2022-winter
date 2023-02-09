@@ -26,6 +26,7 @@ export default {
             deleteItemId: '',
             deleteItemName: '',
             pagination: {},
+            detialItme: {}
         };
     },
     template: `
@@ -65,7 +66,8 @@ export default {
                             <span v-else class="text-danger">未啟用</span></td>
                         <td class="bg-light">
                             <div class="d-flex">
-                                <button class="btn btn-sm me-1" :class="showId === item.id ? 'btn-light disabled': 'btn-primary'" type="button" @click="showId = item.id">
+                                <button class="btn btn-sm me-1" :class="showId === item.id ? 'btn-light disabled': 'btn-primary'"
+                                 type="button" @click="showId = item.id, setDetialItme(item.id)">
                                 <i class="bi" :class="showId === item.id ? 'bi-eye-fill': 'bi-eye'">
                                     </i></button>
                             <button class="btn btn-sm btn-info me-1" type="button" @click="modalModeNewItem = false, setEditData(item.id)"
@@ -153,10 +155,6 @@ export default {
         modalModeTiele() {
             return this.modalModeNewItem ? '新增項目' : '編輯項目';
         },
-        detialItme() {
-            const detialDate = this.setShowItem(this.showId);
-            return detialDate || this.showId;
-        },
         editItemData() {
             return {
                 data: {
@@ -179,6 +177,10 @@ export default {
         }
     },
     methods: {
+        setDetialItme(id) {
+            const detialDate = this.setShowItem(id);
+            this.detialItme = detialDate;
+        },
         getCookieData(key) {
             const cookieStr = (`; ${document.cookie}`)
             const cookieSplit = cookieStr.split(`; ${key}=`)
