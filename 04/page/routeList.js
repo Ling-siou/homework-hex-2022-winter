@@ -2,6 +2,7 @@ import { apiUrl, adminPath } from '../js/config.js';
 
 import componentCheckDeleteModal from '../components/componentCheckDeleteModal.js'; 
 import componentEditItemModal from '../components/componentEditItemModal.js';
+import componentPagination from '../components/componentPagination.js';
 
 export default {
     data() {
@@ -82,21 +83,8 @@ export default {
                 </tbody>
                 </table>
                 <p>目前有 {{ products.length }} 項產品</p>
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-                        <li class="page-item">
-                            <a class="page-link" :class="pagination.has_pre ? '' : 'disabled'" href="#"
-                            @click.prevent="goBesidePage(-1)">
-                                <i class="bi bi-chevron-left"></i></a></li>
-                        <li class="page-item" v-for="page in pagination.total_pages" :key="page"
-                        :class="pagination.current_page == page ? 'active' : ''">
-                            <a class="page-link" href="#" @click.prevent="goPage(page)">{{page}}</a></li>
-                        <li class="page-item">
-                            <a class="page-link" :class="pagination.has_next ? '' : 'disabled'" href="#"
-                            @click.prevent="goBesidePage(1)">
-                                <i class="bi bi-chevron-right"></i></a></li>
-                    </ul>
-                </nav>
+                <componentPagination :go-beside-page="goBesidePage"
+                :go-page="goPage" :pagination="pagination" />
             </div>
             <div class="col-xl-7 col-md-6 col-xs-12 bg-light p-3">
                 <!-- 單一展示 -->
@@ -128,7 +116,7 @@ export default {
             <componentCheckDeleteModal :delete-item-name="deleteItemName" :delete-item="deleteItem" ref="componentCheckDeleteModal" />
         </div>
     `,
-    components : { componentCheckDeleteModal, componentEditItemModal },
+    components : { componentCheckDeleteModal, componentEditItemModal, componentPagination },
     created() {
         const now = new Date();
         if ( now > this.getCookieData('expired') ) {
